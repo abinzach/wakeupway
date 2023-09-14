@@ -271,8 +271,8 @@ const getDesLocationName=()=>{
             id="thresholdSlider"
             axis="y"
             y={thresholdDistance * 10}
-            ymin={minDistance}
-            ymax={maxDistance * 10}
+            ymin={0}
+            ymax={distance*10}
             onChange={({ y }) => handleSliderChange(y / 10)}
             // className="rotated-slider"
           />
