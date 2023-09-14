@@ -6,6 +6,7 @@ import InputSlider from 'react-input-slider'; // Import the slider component
 import ExploreIcon from '@mui/icons-material/Explore';
 import PersonPinCircleRoundedIcon from '@mui/icons-material/PersonPinCircleRounded';
 import PlaceRoundedIcon from '@mui/icons-material/PlaceRounded';
+import Confetti from 'react-dom-confetti';
 
 
 function CityCoordinates() {
@@ -23,6 +24,7 @@ function CityCoordinates() {
   const [disError, setDisError] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [thresholdDistance, setThresholdDistance] = useState(10); // Initial threshold distance
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const apiKey = '64bd257a6829dd4339154ca8a4d60a4f'; // Replace with your actual API key
  
@@ -80,6 +82,16 @@ function CityCoordinates() {
       };
     }
   }, []);
+  const [minDistance, setMinDistance] = useState(0);
+  const [maxDistance, setMaxDistance] = useState(100);
+
+  useEffect(() => {
+    if (distance !== null) {
+      setMinDistance(0);
+      setMaxDistance(distance);
+      setThresholdDistance((distance + 0) / 2); // Calculate the middle value
+    }
+  }, [distance]);
   // useEffect(() => {
   //   var config = {
   //     method: 'get',
@@ -208,6 +220,15 @@ const getDesLocationName=()=>{
       setDistance(calculatedDistance.toFixed(2));
     }
   };
+  const triggerConfetti = () => {
+    setShowConfetti(true);
+  
+    // After a certain time, hide the confetti (e.g., 3 seconds in this example)
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 3000); // Adjust the time as needed
+  };
+  
 
   return (
     <div className="app-container">
@@ -228,20 +249,21 @@ const getDesLocationName=()=>{
       </div>
 
       {desLatitude == null &&desLongitude == null ? <p className='tagline'>The " I'm Almost There " Alarm Clock.</p>:null}
-
-      {myLocationName !== null &&myLocationCityName !== null&&desLatitude !== null &&desLongitude !== null ? (
-      <div className='my-location-container'>
-        <PersonPinCircleRoundedIcon color='primary' fontSize="large" className='my-location-icon'/>
+      {desLatitude !== null && desLongitude !== null ? (
+        <div className='des-location-container'>
+        <PlaceRoundedIcon color='secondary' fontSize="large" className='my-location-icon'/>
         <div className='my-location-name-container'>
-          <p className='my-location-name'>{myLocationName}</p>
-          <p className='my-location-city-name'>{myLocationCityName}</p>
+          <p style={{fontSize:".6rem",marginLeft:".75rem",color:"#9c27b0",marginTop:"-.5rem",marginBottom:"0.3rem"}}>Destination</p>
+          <p className='my-location-name'>{desLocationName}</p>
+          <p className='my-location-city-name'>{desLocationCityName}</p>
         </div>
         </div>
       ) : (
         <p className="app-error">
-          {error ? `Error: ${error}` : ''}
+          {error ? `Error: ${error}` : null}
         </p>
       )}
+      
 
       {/* <h1 className="app-title">When should I wake you up?</h1> */}
       {/* Input field */}
@@ -251,19 +273,26 @@ const getDesLocationName=()=>{
       {desLatitude !== null && desLongitude !== null ? (
       <div className="app-slider"  ref={sliderRef}>
       
-        <InputSlider
-          
-          id="thresholdSlider"
-          axis="y"
-          y={distance !== null ? distance - thresholdDistance : 0}
-          ymin={0}
-          ymax={distance || 50} // Adjust the maximum value as needed
-          onChange={({ y }) => handleSliderChange(y)}
-        />
-        <div>
-        <p style={{paddingLeft:"10px",fontSize:".6rem",translate:"1rem"}}>Wake me up when I'm</p>
-        <div style={{display:"flex"}}>
-        <input dir='rtl' style={{border:"none",outline:"none",width:"3rem",marginLeft:"1rem",fontSize:"24px",color:"#007bff",background:"none",fontWeight:"700",marginTop:"-1rem"}} value={thresholdDistance} type='number' max={distance} onChange={handleThresholdChange}></input>
+      <InputSlider
+            id="thresholdSlider"
+            axis="y"
+            y={thresholdDistance * 10}
+            ymin={minDistance}
+            ymax={maxDistance * 10}
+            onChange={({ y }) => handleSliderChange(y / 10)}
+            // className="rotated-slider"
+          />
+          <div>
+            <p style={{ paddingLeft: "10px", fontSize: ".6rem", translate: "1rem" }}>Wake me up when I'm</p>
+            <div style={{ display: "flex" }}>
+              <input
+                dir='rtl'
+                style={{ border: "none", outline: "none", width: "4.5rem", marginLeft: "1rem", fontSize: "24px", color: "#007bff", background: "none", fontWeight: "700", marginTop: "-1rem" }}
+                value={thresholdDistance}
+                type='number'
+                max={maxDistance}
+                onChange={handleThresholdChange}
+              />
         <p style={{marginTop:".1rem"}}>km</p>
         </div>
         </div>
@@ -277,24 +306,37 @@ const getDesLocationName=()=>{
           {disError ? `Error: ${disError}` : ''}
         </p>
       )}
-      {desLatitude !== null && desLongitude !== null ? (
-        <div className='des-location-container'>
-        <PlaceRoundedIcon color='secondary' fontSize="large" className='my-location-icon'/>
+      
+{myLocationName !== null &&myLocationCityName !== null&&desLatitude !== null &&desLongitude !== null ? (
+      <div className='my-location-container'>
+        <PersonPinCircleRoundedIcon color='primary' fontSize="large" className='my-location-icon'/>
         <div className='my-location-name-container'>
-          <p className='my-location-name'>{desLocationName}</p>
-          <p className='my-location-city-name'>{desLocationCityName}</p>
+        <p style={{fontSize:".6rem",marginLeft:".75rem",color:"#007bff",marginTop:"-.5rem",marginBottom:"0.3rem"}}>My Location</p>
+          <p className='my-location-name'>{myLocationName}</p>
+          <p className='my-location-city-name'>{myLocationCityName}</p>
         </div>
         </div>
       ) : (
         <p className="app-error">
-          {error ? `Error: ${error}` : null}
+          {error ? `Error: ${error}` : ''}
         </p>
       )}
-
-      {distance != null && distance < thresholdDistance ? (
+      {distance != null && distance <= thresholdDistance ? (
         <div>
          <p className="app-message">You have arrived</p>
+         {()=>triggerConfetti}
         <Notification1 />
+        {showConfetti &&(
+    <Confetti
+      style={{
+        position: 'absolute',
+        zIndex: 1, // Adjust the zIndex as needed
+      }}
+
+    />
+   
+  )}
+   
         </div>
       ) : null}
     </div>

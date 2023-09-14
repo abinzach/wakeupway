@@ -87,6 +87,7 @@ body {
 }
 .my-location-icon {
  height: 100px;
+ padding-top: .4rem;
 }
 .my-location-name {
   margin-left:.8rem;
@@ -124,11 +125,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   touch-action: none;
   margin-right: 20px;
 }
-
+.rotated-slider{
+  transform: rotate(180deg);
+}
 .app-distance {
   font-size: 12px;
   margin-top:-1rem;
@@ -143,6 +146,9 @@ body {
   font-weight: bold;
   color: #007bff;
   margin-top: 10px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Add additional styling as needed */
