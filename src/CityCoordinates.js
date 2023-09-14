@@ -23,7 +23,7 @@ function CityCoordinates() {
   const [desLocationCityName,setDesLocationCityName]= useState("");
   const [disError, setDisError] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
-  const [thresholdDistance, setThresholdDistance] = useState(10); // Initial threshold distance
+  const [thresholdDistance, setThresholdDistance] = useState(Math.round(distance / 2)); // Initial threshold distance
   const [showConfetti, setShowConfetti] = useState(false);
 
   const apiKey = '64bd257a6829dd4339154ca8a4d60a4f'; // Replace with your actual API key
@@ -85,13 +85,7 @@ function CityCoordinates() {
   const [minDistance, setMinDistance] = useState(0);
   const [maxDistance, setMaxDistance] = useState(100);
 
-  useEffect(() => {
-    if (distance !== null) {
-      setMinDistance(0);
-      setMaxDistance(distance);
-      setThresholdDistance((distance + 0) / 2); // Calculate the middle value
-    }
-  }, [distance]);
+
   // useEffect(() => {
   //   var config = {
   //     method: 'get',
