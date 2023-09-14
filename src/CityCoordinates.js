@@ -33,8 +33,9 @@ function CityCoordinates() {
     };
   });
   useEffect(() => {
-    getMyLocationName();
     getMyLocationCoordinates();
+    getMyLocationName();
+    
     console.log("expensive")
    },[]);
   
@@ -45,12 +46,22 @@ function CityCoordinates() {
     };
   });
   useEffect(() => {
-    const interval = setInterval(getMyLocationName, 120 * 1000); // 5 minutes in milliseconds
+    const interval = setInterval(getMyLocationName, 120 * 1000); // 2 minutes in milliseconds
     return () => {
       clearInterval(interval);
     };
   });   
-
+  useEffect(() => {
+    if (desLatitude !== null && desLongitude !== null) {
+      getDesLocationName();
+    }
+  }, [desLatitude, desLongitude]);
+  
+  useEffect(() => {
+    if (srcLatitude !== null && srcLongitude !== null) {
+      getMyLocationName();
+    }
+  }, [srcLatitude, srcLongitude]);
   // useEffect(() => {
   //   var config = {
   //     method: 'get',
@@ -200,7 +211,7 @@ const getDesLocationName=()=>{
 
       {desLatitude == null &&desLongitude == null ? <p className='tagline'>The " I'm Almost There " Alarm Clock.</p>:null}
 
-      {desLatitude !== null &&desLongitude !== null ? (
+      {myLocationName !== null &&myLocationCityName !== null&&desLatitude !== null &&desLongitude !== null ? (
       <div className='my-location-container'>
         <PersonPinCircleRoundedIcon color='primary' fontSize="large" className='my-location-icon'/>
         <div className='my-location-name-container'>
