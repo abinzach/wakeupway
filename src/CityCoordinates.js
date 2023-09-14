@@ -255,7 +255,7 @@ const getDesLocationName=()=>{
           
           id="thresholdSlider"
           axis="y"
-          y={thresholdDistance}
+          y={distance !== null ? distance - thresholdDistance : 0}
           ymin={0}
           ymax={distance || 50} // Adjust the maximum value as needed
           onChange={({ y }) => handleSliderChange(y)}
