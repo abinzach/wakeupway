@@ -124,11 +124,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  
+  touch-action: none;
+  margin-right: 20px;
 }
 
 .app-distance {
-  font-size: 13px;
-  margin-top: 10px;
+  font-size: 12px;
+  margin-top:-1rem;
+  translate: -1.5rem;
   display: flex;
   justify-content:center ;
   

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import axios from 'axios';
 import './index.css'; // Import your CSS file
 import Notification1 from './Notification1';
@@ -25,7 +25,9 @@ function CityCoordinates() {
   const [thresholdDistance, setThresholdDistance] = useState(10); // Initial threshold distance
 
   const apiKey = '64bd257a6829dd4339154ca8a4d60a4f'; // Replace with your actual API key
+ 
 
+  const sliderRef = useRef(null);
   useEffect(() => {
     const interval = setInterval(getDistance, 1 * 1000); // 5 minutes in milliseconds
     return () => {
@@ -62,6 +64,22 @@ function CityCoordinates() {
       getMyLocationName();
     }
   }, [srcLatitude, srcLongitude]);
+
+  useEffect(() => {
+    const sliderElement = sliderRef.current;
+
+    if (sliderElement) { // Check if sliderElement is defined
+      const preventDefaultTouch = (e) => {
+        e.preventDefault();
+      };
+
+      sliderElement.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+
+      return () => {
+        sliderElement.removeEventListener('touchmove', preventDefaultTouch);
+      };
+    }
+  }, []);
   // useEffect(() => {
   //   var config = {
   //     method: 'get',
@@ -231,7 +249,7 @@ const getDesLocationName=()=>{
 
       {/* Slider */}
       {desLatitude !== null && desLongitude !== null ? (
-      <div className="app-slider">
+      <div className="app-slider"  ref={sliderRef}>
       
         <InputSlider
           
@@ -242,12 +260,18 @@ const getDesLocationName=()=>{
           ymax={distance || 50} // Adjust the maximum value as needed
           onChange={({ y }) => handleSliderChange(y)}
         />
-        <input dir='rtl' style={{border:"none",outline:"none",width:"3rem",marginLeft:"1rem",fontSize:"24px",color:"#007bff",background:"none",fontWeight:"700"}} value={thresholdDistance} type='number' max={distance} onChange={handleThresholdChange}></input>
-        <p>km</p>
+        <div>
+        <p style={{paddingLeft:"10px",fontSize:".6rem",translate:"1rem"}}>Wake me up when I'm</p>
+        <div style={{display:"flex"}}>
+        <input dir='rtl' style={{border:"none",outline:"none",width:"3rem",marginLeft:"1rem",fontSize:"24px",color:"#007bff",background:"none",fontWeight:"700",marginTop:"-1rem"}} value={thresholdDistance} type='number' max={distance} onChange={handleThresholdChange}></input>
+        <p style={{marginTop:".1rem"}}>km</p>
+        </div>
+        </div>
       </div>):null}
 
       {distance !== null ? (
-        <p className="app-distance">{distance}km away</p>
+        
+        <p className="app-distance">{distance}km</p>
       ) : (
         <p className="app-error">
           {disError ? `Error: ${disError}` : ''}
